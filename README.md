@@ -52,7 +52,7 @@ As your server is running on a single port, you need to add 2 records to your DN
 
 ## 3. Creating user
 ```bash
-curl https://raw.githubusercontent.com/SupremeFaceStephan/matrix-machen/refs/heads/main/create-user.sh
+curl -o create-user.sh https://raw.githubusercontent.com/SupremeFaceStephan/matrix-machen/refs/heads/main/create-user.sh
 chmod +x create-user.sh
 ./create-user.sh alice MyStrongP@ssw0rd admin
 ```
