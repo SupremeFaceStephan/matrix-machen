@@ -34,7 +34,6 @@ database:
     cp_min: 5
     cp_max: 10
 ```
-In the config file, change bind-addreses from `['::1', '127.0.0.1']` to `['0.0.0.0']` to bind synapse to all interfaces.
 
 ## 2. DNS
 ### You need to open port 8008 (and 8448 if you don't use a proxy or SRV record and want [federation](https://element-hq.github.io/synapse/latest/federate.html)).
@@ -51,6 +50,7 @@ As your server is running on a single port, you need to add 2 records to your DN
 ### [Nginx (WWW) setup](docs/Nginx-config.md)
 
 ## 3. Creating user
+Warning: Don't use `!` in password because it will break the script!
 ```bash
 curl -O https://raw.githubusercontent.com/SupremeFaceStephan/matrix-machen/refs/heads/main/create-user.sh
 chmod +x create-user.sh
@@ -82,8 +82,9 @@ docker run --rm \
 - Find appservice and change `address` to `http://meta-bridge:29319` for proper registration generation.
 - In `appservice`, change `hostname` from `127.0.0.1` to `0.0.0.0`, or you will face connection issues.
 - In `appservice`, change the public domain to your domain (example: `https://matrix.example.com`).
+- In `database` fill user, password, database and hostname
 - Optional: if you want older messages, go to the backfill category and enable it, configure it to your liking, or leave the default.
-- Find `permissions` and change `"@admin:example.com": admin` to `<your matrix username>: admin`.
+- Find `permissions` and change `"@admin:example.com": admin` to `<your matrix username>:matrix.example.com: admin`.
 
 ### 4. Again generate mautrix
 ```bash
@@ -100,7 +101,7 @@ and add at the bottom:
 
 ```yaml
 app_service_config_files:
-	- /data/meta-registration.yaml
+  - /data/meta-registration.yaml
 ```
 
 ### 6. Edit synapse in compose.yml
@@ -132,7 +133,7 @@ services:
       - db
     networks:
       - synapse-network
- meta-bridge:
+  meta-bridge:
     image: dock.mau.dev/mautrix/meta:latest
     container_name: matrix-meta-bridge
     environment:
@@ -165,7 +166,7 @@ networks:
 ### Starting the bridge
 1. Restart the Synapse container
 ```bash
-docker compose restart synapse
+docker compose up -d synapse
 ```
 2. Run it to check for any potential errors.
 ```bash
